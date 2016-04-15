@@ -1,0 +1,843 @@
+html * {
+    margin: 0; 
+    /*padding: 0; SELECT NOT DISPLAYED CORRECTLY IN FIREFOX */
+}
+
+/* GENERAL */
+
+.spinner {
+    padding: 5px;
+    float:left;
+}
+
+body {
+    /*background:#fff url(../images/gradientbody762px.gif) repeat-y scroll center;*/
+    font: 11px verdana, arial, helvetica, sans-serif;
+	text-align: center;
+}
+
+div#wrapper {
+	margin:0pt auto;
+	width: 1000px;
+	position: relative;
+
+}
+
+div.footer {
+  border-top: 1px solid #e0e0e0;	
+  font: 9px verdana, arial, helvetica, sans-serif;
+  margin: 40px 10px 10px 10px;
+  padding: 5px;
+  text-align: center;
+}
+
+a:link, a:visited, a:hover {
+    color: #666;
+    font-weight: bold;
+    text-decoration: none;
+} 
+
+h1 {
+    color: #006dba;
+    font-weight: normal;
+    font-size: 16px;
+    margin: .8em 0 .3em 0;
+}
+
+ul {
+    padding-left: 15px;	
+}
+
+select, textarea {
+    background-color: #fcfcfc;
+    border: 1px solid #ccc;
+    font: 11px verdana, arial, helvetica, sans-serif;
+    margin: 2px 0;
+    padding: 2px 4px;
+}
+select {
+   padding: 2px 2px 2px 0;
+}
+textarea {
+	width: 250px;
+	height: 150px;
+	vertical-align: top;
+}
+
+input:focus, select:focus, textarea:focus {
+    border: 1px solid #b2d1ff;
+}
+
+.body {
+    /* float: left; */
+    margin: 10px 15px 10px 25px;
+	text-align: left;
+}
+
+/* NAVIGATION MENU */
+
+.nav {
+    background: #fff url(../images/pedigree_logo.png);
+    background-color: #006dba;
+    height: 90px;
+    /*border: 1px solid #000;*/
+    /*border-style: solid none solid none;	*/
+    padding: 7px 12px;
+	text-align: left;
+}
+
+.menuButton {
+    font-size: 11px;
+    padding: 0 5px;
+}
+.menuButton a, .menuButton a:visited {
+    color: black;
+    padding: 4px 6px;
+    font-weight: bold;
+}
+
+.menuButton a:hover {
+    color: #fff;
+    padding: 4px 6px;
+    font-weight: bold;
+    text-decoration: underline;
+}
+.menuButton a.home {
+    background: url(../images/skin/house.png) center left no-repeat;
+    color: #fff;
+    padding-left: 25px;
+}
+.menuButton a.list {
+    background: url(../images/skin/database_table.png) center left no-repeat;
+    color: #333;
+    padding-left: 25px;
+}
+.menuButton a.create {
+    background: url(../images/skin/database_add.png) center left no-repeat;
+    color: #333;
+    padding-left: 25px;
+}
+
+/* MESSAGES AND ERRORS */
+
+
+.message {
+    background: #f3f8fc url(../images/skin/information.png) 8px 50% no-repeat;
+    border: 1px solid #b2d1ff;
+    color: #006dba;
+    margin: 10px 15px 5px 15px;
+    padding: 5px 5px 5px 30px;
+	text-align: left;
+}
+
+div.errors {
+    background: #fff3f3;
+    border: 1px solid red;
+    color: #cc0000;
+    margin: 10px 0 5px 0;
+    padding: 5px 0 5px 0;
+}
+div.errors ul {
+    list-style: none;
+    padding: 0;	
+}
+div.errors li {
+	background: url(../images/skin/exclamation.png) 8px 0% no-repeat;
+    line-height: 16px;
+    padding-left: 30px;
+}
+
+td.errors input, td.errors select, td.errors textarea {
+    border: 1px solid red;
+}
+
+/* TABLES */
+table {
+    border: 1px solid #ccc;
+    width: 100%;
+    _width: 95%;
+}
+tr {
+    border: 0;
+}
+td, th { 
+    font: 11px verdana, arial, helvetica, sans-serif;
+    line-height: 12px;
+    padding: 5px 6px;
+    text-align: left;
+    vertical-align: top;
+}
+th {
+    background: #fff url(../images/skin/shadow.jpg) top repeat-x;);
+    color: #666;
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 17px;
+    padding: 2px 6px;
+}
+th a:link, th a:visited, th a:hover {
+    color: #333;
+    display: block;
+    font-size: 10px;
+    text-decoration: none;
+    width: 100%;
+}
+th.asc a, th.desc a {
+    background-position: right;
+    background-repeat: no-repeat;
+}
+th.asc a {
+    background-image: url(../images/skin/sorted_asc.gif);
+}
+th.desc a {
+    background-image: url(../images/skin/sorted_desc.gif);
+}
+
+.odd {
+    background: #f7f7f7;
+}
+.even {
+    background: #fff;
+}
+
+/* LIST */
+
+.list table {
+    border-collapse: collapse;
+}
+.list th, .list td {
+    border-left: 1px solid #ddd;
+}
+.list th:hover, .list tr:hover {
+    background: #b2d1ff;
+}
+
+/* PAGINATION */
+
+.paginateButtons {
+    background: #fff url(../images/skin/shadow.jpg) bottom repeat-x;
+    border: 1px solid #ccc;
+    border-top: 0;
+    color: #666;
+    font-size: 10px;
+    overflow: hidden;
+    padding: 10px 3px;
+}
+.paginateButtons a {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-color: #ccc #aaa #aaa #ccc;
+    color: #666;
+    margin: 0 3px;
+    padding: 2px 6px;
+}
+.paginateButtons span {
+    padding: 2px 3px;
+}
+
+/* DIALOG */
+
+.dialog table {
+    padding: 5px 0;
+}
+
+.prop {
+    padding: 5px;
+}
+.prop .name {
+    text-align: left;
+    width: 15%;
+    white-space: nowrap;
+    font-weight: bold;
+}
+.prop .value {
+    text-align: left;
+    width: 85%;
+}
+
+/* ACTION BUTTONS */
+
+.buttons {
+   
+    background: #fff url(../images/skin/shadow.jpg) bottom repeat-x; 
+    border: 1px solid #ccc;
+    
+    color: #666;
+    font-size: 10px;
+    margin-top: 5px;
+    overflow: hidden;
+    padding: 0;
+}
+
+
+
+.buttons input {
+    background: #fff;
+    border: 0;
+    color: #333;
+    cursor: pointer;
+    font-size: 10px;
+    font-weight: bold;
+    margin-left: 3px;
+    overflow: visible;
+    padding: 2px 6px;
+}
+.buttons input.delete {
+    background: transparent url(../images/skin/database_delete.png) 5px 50% no-repeat;
+    padding-left: 28px;
+}
+.buttons input.edit {
+    background: transparent url(../images/skin/database_edit.png) 5px 50% no-repeat;
+    padding-left: 28px;
+}
+.buttons input.save {
+    background: transparent url(../images/skin/database_save.png) 5px 50% no-repeat;
+    padding-left: 28px;
+}
+
+/********************* 
+ * FAQ 
+ *********************/
+.faq {
+    margin: 20px 0 10px 0;
+    float: left;
+    clear: both;
+	width: 620px;
+}
+.faq .faq_icon {
+    float: left;
+    width: 20px;
+    text-align: center;
+    padding: 3px;
+}
+.faq .faq_subject {
+    font-weight: bold;
+    margin: 0 0 5px 0;
+    float:left;
+	width: 590px;
+}
+.faq .faq_details {
+    clear:both;
+    margin: 0 0 5px 27px;
+    _margin-left: 21px;
+	width: 600px;
+	clear: both;
+}
+
+.faq .faq_tools {
+   margin: 0 0 0 28px;
+}
+
+/********************* 
+ * ADMIN 
+ *********************/
+.admin_tool {
+    margin: 35px 10px;
+}
+
+.admin_tool .admin_title {
+  background:transparent url(../images/admin_icon.jpg) no-repeat scroll 0%;
+  font-weight:bold;
+  margin:10px 0pt;
+  padding-left:20px;
+}
+
+.admin_tool .admin_details { 
+    margin: 0 0 5px 20px;
+}
+
+/********************* 
+ * HOME 
+ *********************/
+.site_description {
+  margin: 30px 10px 30px 10px;
+}
+
+.site_info {
+  margin: 10px 10px 10px 0px;
+  border: 1px dotted #ccc;
+  width: 350px;
+  height: 250px;
+  padding: 10px;
+  float: left;
+
+}
+
+.site_chart {
+  margin: 10px 0 10px 0px;
+  width: 280px;
+  height: 125px;
+  float: left;
+
+}
+
+.site_top {
+  margin: 10px 0px 10px 0px;
+  clear: both;
+}
+
+.eventItem {
+    margin: 10px 0 10px 20px;
+    padding: 10px;
+}
+
+.announcement {
+    background: transparent url(../images/news.jpeg) 2px no-repeat;
+    padding-left:35px;
+}
+
+.events_timeline {
+    height: 250px; 
+    width: 1000px;
+    border: 1px solid #000;
+}
+
+.timeline-event-bubble-title, .timeline-event-bubble-body, .timeline-event-bubble-time {
+    text-align: left;	
+}
+
+.top {
+  border: 1px solid #000;
+  height: 100px;
+}
+/********************* 
+ * Create/Edit Member
+ *********************/
+.member_form_nf {
+    clear: both;
+}
+.member_form_nf .member_item_nf {
+    border: 1px solid #000;
+    margin: 10px 0px;
+    clear: both;
+    width:600px;
+    _width: 590px;
+}
+
+
+.member_form {
+	float: left;
+	clear: both;
+}
+
+.member_form .member_item {
+	border: 1px solid #000;
+	margin: 10px 0px;
+	float: left;
+	clear: both;
+	width:600px;
+	_width: 590px; 
+}
+
+.member_form .member_item .member_title {
+	float: left;
+	clear: both;
+	padding: 4px;
+	font-weight: bold;
+	color: #006DBA;
+	width: 590px;
+	background: #fff url(../images/skin/shadow.jpg) top repeat-x;);
+}
+
+.member_form .member_item .half {
+	float: left;
+	padding: 15px;
+	color: #000;
+	width: 250px;
+	_width: 270px;
+	height: 110px;
+}
+
+.member_form .member_item .member_details {
+	float: left;
+	padding: 2px;
+	color: #ccc;
+	width: 590px;
+	clear: both;
+}
+
+.member_form .member_item .member_name {
+	float: left;
+	clear: left;
+	width: 100px;
+	padding: 2px;
+	margin: 5px;
+	text-align:right;
+	font-weight: bold;
+}
+
+.member_form .member_item .member_value {
+	float: left;
+	padding: 2px;
+	margin: 5px;
+	width: 300px;
+}
+/********************* 
+ * Display Member
+ *********************/
+.display_tree_home {
+    /*border-right: 2px solid #ccc;*/
+    /*border-left: 2px solid #ccc;*/
+    width: 950px;
+    float: left;
+    margin: 10px;
+    height:450px;
+}
+
+
+.display_tree {
+  border-right: 2px solid #ccc;
+  width: 500px;
+  float: left;
+  margin: 10px;
+  height:450px;
+}
+
+.display_details {
+  /* border: 1px solid #ff0;  */
+  height: 450px;
+  width: 400px;
+  float:left;
+  margin:10px;
+  text-align:center;
+  vertical-align:middle;
+}
+
+.display_outer {
+  border: 1px solid #00f;
+  padding: 10px;
+  margin:0px auto;
+  text-align:center;
+}
+
+.display_spinner {
+  width:20px;
+  height:20px;
+  margin-left: 2px;
+  background:transparent url(../images/tree/menu/loading.gif) no-repeat scroll left top;
+}
+
+img.avatar_tab {
+  float:left;
+  width: 130px;
+  height: 130px;
+  border: 1px solid #000;
+}
+
+div.tab_fullname {
+  float: left;
+  width: 230px;
+  font-weight: bold;
+  font-size: 14px;
+  margin: 2px;
+}
+
+div.tab_previous_marriages {
+  float: left;
+  clear: both;
+  margin: 2px 5px;
+  /* border: 1px dotted #0f0; */
+  text-align: left;
+  height: 15px;
+  width: 380px;
+}
+
+div.tab_siblings {
+  float: left;
+  clear: both;
+  margin: 2px 5px;
+  /* border: 1px dotted #0f0; */
+  text-align: left;
+  height: 30px;
+  width: 370px;
+}
+
+span.person {
+ background:transparent url(../images/icon_person.gif) no-repeat scroll left top;
+ padding-left: 12px;
+ padding-right: 3px;
+}
+
+div.tab_controls {
+  float: left;
+  margin: 5px;
+  clear: both;
+  width: 370px;
+  text-align: left;
+}
+
+div.tab_name {
+  float: left;
+  width: 90px;
+  /* border: 1px dotted #f00; */
+  text-align: right;
+  font-weight: bold;
+  margin: 2px;
+}
+
+div.tab_value {
+  float: left;
+  width: 140px;
+  margin: 2px;
+  /* border: 1px dotted #f0f; */
+  text-align: left;
+}
+.display_autocomplete {
+  border: 1px solid #ccc;
+  padding: 20px 30px 30px 30px;
+  margin: 10px;
+  float: left;
+}
+
+.quick_links {
+  border: 1px solid #ccc;
+  padding: 20px 30px 30px 30px;
+  margin: 10px;	
+  float:left;
+}
+
+.display_member_children {
+  margin:0px auto;
+  /* border:1px dotted #c0c; */
+  text-align: center;
+}
+
+div.parent_icon {   
+  width: 150px;
+  height: 45px;
+  border: 1px solid #00f;
+  padding-top: 10px;
+}
+
+.display_member_parent {
+  /* border: 1px dotted #ccc; */
+  width: 150px;
+  height: 85px;
+  margin:0px auto;
+  padding-left: 45px;
+  text-align:left;
+}
+
+.yesparent {
+  background: url(../images/parent_icon.gif) no-repeat left top;
+}
+
+.display_member_child {
+  /* border: 1px dotted #ccc; */
+  padding: 12px 0 3px 38px;
+  margin: 1px auto;
+  text-align: left;
+  display: inline-table ;
+  height: 10px;
+}
+
+.MALE {
+  background: url(../images/man.jpg) no-repeat left top;
+}
+
+.FEMALE {
+  background: url(../images/woman.jpg) no-repeat left top;
+}
+
+
+.display_member {
+  /* border: 1px dotted #ccc; */
+  padding: 10px 0;
+  width: 400px;
+  height: 245px;
+  margin:0px auto;
+}
+
+#deleteDialog, #resetDialog, #weddingPanel {
+	text-align: left;
+}
+
+/********************* 
+ * MISC 
+ *********************/
+.roundcont {
+	width: 650px;
+	background-color: #f90;
+	color: #000;
+	margin: 20px 0;
+}
+
+.roundcont p {
+	margin: 0 10px;
+}
+
+.roundtop { 
+	background: url(../images/tr.gif) no-repeat top right; 
+}
+
+.roundbottom {
+	background: url(../images/br.gif) no-repeat top right; 
+}
+
+img.corner {
+   width: 15px;
+   height: 15px;
+   border: none;
+   display: block !important;
+}
+
+
+.roundbox {
+   width: 500px;
+   border: 1px solid #669966;
+
+    
+}
+
+.roundbox .topright {
+   margin: -1px 0px -1px 1px ;
+   background:transparent url(../images/green_tr.gif) no-repeat scroll right top;
+   height: 20px;
+   width: 100%;
+   
+}
+
+.roundbox .topright .topleft {
+   margin: 0px 0px 0px -2px;
+   background:transparent url(../images/green_tl.gif) no-repeat scroll left top;
+   height: 20px;
+  
+   
+}
+.roundbox .bottomright {
+   margin: 0px 0px -5px 1px ;
+   background:transparent url(../images/green_br.gif) no-repeat scroll right top;
+   height: 20px;
+   width: 100%;
+   
+}
+
+.roundbox .bottomright .bottomleft {
+   margin: 0px 0px 0px -2px;
+   background:transparent url(../images/green_bl.gif) no-repeat scroll left top;
+   height: 20px;
+   
+}
+
+.roundbox .contents {
+  padding: 10px;
+}
+
+.version {
+  float:right;
+  clear:both;
+  margin:-20px 5px 0 0 ;
+  color: #ffffff;
+  font-style: italic;
+}
+
+.version a {
+   color: #ffffff;
+}
+
+.version a:hover {
+  text-decoration: underline;
+}
+
+.required {
+  color: #990000;
+}
+
+.help {
+  font-size: 9px;
+  color: #404040;
+  background:transparent url(../images/help.jpeg) no-repeat scroll left top;
+  padding: 2px 0 2px 18px;
+ 
+}
+
+.ygtvitem table {
+   border: none;
+}
+
+.ygtvitem table td{
+   padding: 2px;
+}
+
+div.spacer {
+  padding: 20px;
+}
+
+span#upcomingEventsResult {
+  margin-left: 10px;
+  color: #990000;
+}
+
+.logo {
+  font-size: 30px;
+  padding: 25px 0 2px 20px;
+  color: #003366;
+  font-weight: bold;
+  vertical-align: top;
+  text-align: left;
+  font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+
+.loginInfo {
+  text-align: right;
+  margin-right:10px;
+  font-size: 11px;
+  color: #000;
+}
+
+.loginInfo a, .loginInfo a:visited {
+  color: #000;
+}
+
+.loginInfo a:hover {
+  color: #000;
+  text-decoration: underline;
+}
+input.button {
+   background-color:transparent;
+   background:transparent url(../images/button_bg.gif) no-repeat;
+   font-weight: bold;
+   width: 121px;
+   border:medium none;
+   color:#006dba;
+   height:36px;
+   padding-bottom:7px;
+   text-align:center;
+   text-decoration:none;
+}
+
+input.disabled {
+  color:#ccc;
+}
+
+/* Wedding */
+.edit_wedding {
+  width: 375px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin: 5px;
+  clear: both;
+}
+.edit_wedding .title {
+  float: left;
+  font-weight: bold;
+  text-align:center;
+  width: 320px;
+  margin: 2px;
+  font-size: 12px;
+}
+.edit_wedding .name {
+  float: left;
+  font-weight: bold;
+  text-align:right;
+  width: 100px;
+  height: 20px;
+  margin: 5px;
+  vertical-align: middle;
+}
+.edit_wedding .value {
+  float: left;
+  width: 220px;
+  height: 20px;
+  margin: 5px;
+}
