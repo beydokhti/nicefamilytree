@@ -97,8 +97,8 @@ grails.plugins.springsecurity.userLookup.userDomainClassName = 'nicefamilytree.A
 grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'nicefamilytree.AuthUserRole'
 grails.plugins.springsecurity.authority.className = 'nicefamilytree.Role'
 grails.plugins.springsecurity.requestMap.className = 'nicefamilytree.AuthUserRole'
-//grails.plugins.springsecurity.securityConfigType = 'InterceptUrlMap'
-grails.plugins.springsecurity.securityConfigType = SecurityConfigType.Annotation
+grails.plugins.springsecurity.securityConfigType = 'InterceptUrlMap'
+//grails.plugins.springsecurity.securityConfigType = SecurityConfigType.Annotation
 
 
 
@@ -117,7 +117,7 @@ grails.plugins.springsecurity.interceptUrlMap = [
         '/img/**': ['IS_AUTHENTICATED_ANONYMOUSLY'],
         '/images/**': ['IS_AUTHENTICATED_ANONYMOUSLY'],
 //        '/favico.ico': ['IS_AUTHENTICATED_ANONYMOUSLY'],
-        '/**': ['IS_AUTHENTICATED_REMEMBERED'],
+        '/**': ['IS_AUTHENTICATED_ANONYMOUSLY'],
         '/main/**': ['ROLE_ADMIN'],
         '/member/**': ['ROLE_ADMIN'],
 ]
@@ -128,3 +128,5 @@ grails.plugins.springsecurity.authority.className = 'nicefamilytree.Role'
 
 grails.plugins.springsecurity.successHandler.alwaysUseDefault = true
 grails.plugins.springsecurity.successHandler.defaultTargetUrl = '/main'
+
+avatar.small.temp.path="/tempAvatar/"

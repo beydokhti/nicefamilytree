@@ -178,9 +178,9 @@
                                                     margin: new go.Margin(0, 0, 0, 3)
                                                 },
                                                 new go.Binding("text", "title").makeTwoWay()),
-                                        $(go.TextBlock, textStyle(),
-                                                { row: 2, column: 0 },
-                                                new go.Binding("text", "key", function(v) {return "ID: " + v;})),
+//                                        $(go.TextBlock, textStyle(),
+//                                                { row: 2, column: 0 },
+//                                                new go.Binding("text", "key", function(v) {return "ID: " + v;})),
                                         $(go.TextBlock, textStyle(),
                                                 { row: 2, column: 3, },
                                                 new go.Binding("text", "parent", function(v) {return "Boss: " + v;})),
@@ -271,7 +271,7 @@
     }
 </script>
 <div id="sample">
-    <div id="myDiagram" style="background-color: #222222; border: solid 1px black; height: 500px"></div>
+    <div id="myDiagram" style="background-color: #222222; border: solid 1px black; height: 500px; "></div>
     %{--<div>--}%
         %{--<textarea id="mySavedModel" style="width:0%;height:0px" >{ "class": "go.TreeModel",--}%
         %{--"nodeDataArray": [--}%

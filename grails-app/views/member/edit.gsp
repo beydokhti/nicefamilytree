@@ -1,4 +1,4 @@
-<%@ page import="com.mano.familytree.data.Gender" %>      
+<%@ page import="niceFamilyTree.data.Gender" %>
   
 <html>
     <head>

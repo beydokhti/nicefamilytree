@@ -1,6 +1,7 @@
 dataSource {
     pooled = true
     driverClassName = "org.h2.Driver"
+    dialect = org.hibernate.dialect.MySQL5InnoDBDialect
     username = "sa"
     password = ""
 }
@@ -17,6 +18,7 @@ environments {
 //            url = "jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000"
             dbCreate = "update" // one of 'create', 'create-drop', 'update', 'validate', ''
             driverClassName = "com.mysql.jdbc.Driver"
+            dialect = "org.hibernate.dialect.MySQL5InnoDBDialect"
             username = "nicefamilytree"
             password = "nicefamilytree"
             url = "jdbc:mysql://localhost/nicefamilytree?useUnicode=yes&characterEncoding=UTF-8"

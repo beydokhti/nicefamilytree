@@ -1,4 +1,4 @@
-<%@ page import="com.mano.familytree.data.Gender" %>      
+<%@ page import="niceFamilyTree.data.Gender;" %>
 
 <div class="member_form">
 
@@ -31,7 +31,7 @@
 
       <div class="member_name">Gender:</div>
       <div class="member_value ${hasErrors(bean:member,field:'gender','errors')}">
-         <g:select id='gender' name='gender' value="${fieldValue(bean:member,field:'gender')}" from="${Gender.values()}" noSelection="['':'-Choose-']" onchange="genderChanged(this.value)"/>
+         <g:select id='gender' name='gender' value="${fieldValue(bean:member,field:'gender')}" from="${niceFamilyTree.data.Gender.values()}" noSelection="['':'-Choose-']" onchange="genderChanged(this.value)"/>
          <span class="required">*</span>
       </div>
                               

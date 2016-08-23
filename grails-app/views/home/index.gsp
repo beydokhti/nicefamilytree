@@ -35,6 +35,10 @@
 	<script type="text/javascript" src="${resource(dir:'/assets/js',file:'go.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'/assets/js/',file:'goSamples.js')}"></script>
 
+	<script type="text/javascript">
+		var selectedMember=0;
+	</script>
+
 </head>
 
 <body id="page-top" class="index">
@@ -95,7 +99,7 @@
 	<div class="container">
 		<div class="row text-center">
 
-			<g:render template="/common/familyTreeChart"/>
+			<g:render template="/common/familyTree"/>
 		</div>
 	</div>
 </section>
@@ -267,12 +271,12 @@
 				</ul>
 			</div>
 			<div class="col-md-4">
-				<ul class="list-inline quicklinks">
-					<li><a href="#">Privacy Policy</a>
-					</li>
-					<li><a href="#">Terms of Use</a>
-					</li>
-				</ul>
+				%{--<ul class="list-inline quicklinks">--}%
+					%{--<li><a href="#">Privacy Policy</a>--}%
+					%{--</li>--}%
+					%{--<li><a href="#">Terms of Use</a>--}%
+					%{--</li>--}%
+				%{--</ul>--}%
 			</div>
 		</div>
 	</div>
@@ -296,9 +300,9 @@
 <!-- Custom Theme JavaScript -->
 <script src="js/agency.js"></script>
 
-<div>
-	<textarea id="mySavedModel" style="width:0%;height:0px" >${chartMemebers}</textarea>
-</div>
+%{--<div>--}%
+	%{--<textarea id="mySavedModel" style="width:0%;height:0px" >${chartMemebers}</textarea>--}%
+%{--</div>--}%
 
 
 </body>

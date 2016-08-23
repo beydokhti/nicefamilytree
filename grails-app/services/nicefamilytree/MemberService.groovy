@@ -19,6 +19,8 @@ class MemberService {
     	member.avatar = null
     	member.avatarMime = null
     	member.save()
+
+        //todo-mtb delete small avatar from tempAvatar
     }
     
     // create a new member

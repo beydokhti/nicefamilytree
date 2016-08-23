@@ -1,189 +1,518 @@
+<!DOCTYPE html>
 <html>
-   <head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-      <meta name="layout" content="test" />
-      <title>Display Member</title>
-      <resource:treeView />
-      <resource:tabView />
-      <resource:autoComplete skin="default"/>
-      <g:javascript library="${resource(dir:'/js/yui/yahoo-dom-event',file:'yahoo-dom-event.js')}" />
-      <g:javascript library="/js/yui/element/element-beta" />
-      <g:javascript library="${resource(dir:'/yui/button',file:'button.js')}" />
-      <g:javascript library="/js/yui/container/container" />
-      <g:javascript library="/js/yui/dragdrop/dragdrop" />
+<head>
+    <title>Nice Family Tree</title>
+    <meta name="layout" content="rowLayout"/>
+    %{--<meta name="description" content="A family tree diagram of British royalty." />--}%
+    %{--<!-- Copyright 1998-2016 by Northwoods Software Corporation. -->--}%
+    %{--<meta charset="UTF-8">--}%
+    %{--<script src="${resource(dir:"js",file:"go.js")}"></script>--}%
+    <g:javascript src="go.js"/>
+    <link href="../assets/css/goSamples.css" rel="stylesheet" type="text/css"/>  <!-- you don't need to use this -->
+    <link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700' rel='stylesheet' type='text/css'>
 
-       %{--<script type="text/javascript" src="${resource(dir:"/js/yui/yahoo-dom-event",file: "yahoo-dom-event.js")}"></script>--}%
-       %{--<script type="text/javascript" src="${resource(dir:"/js/yui/element",file: "element.js")}"></script>--}%
-       %{--<script type="text/javascript" src="${resource(dir:"/js/yui/button",file: "button.js")}"></script>--}%
-       %{--<script type="text/javascript" src="${resource(dir:"/js/yui/dragdrop",file: "dragdrop.js")}"></script>--}%
+    %{--<script src="${resource(dir:'js',file:'goSamples.js')}"></script>--}%
+    <style>
+    #overlayCover {
+        position: fixed;
+        top: 0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 5;
+        width: 100%;
+        height: 100%;
+        display: none;
+    }
 
-      <link rel="stylesheet" href="${createLinkTo(dir:'js',file:'yui/fonts/fonts-min.css')}" />
-      <link rel="stylesheet" href="${createLinkTo(dir:'js',file:'yui/button/assets/skins/sam/button.css')}" />
-      <link rel="stylesheet" href="${createLinkTo(dir:'js',file:'yui/container/assets/skins/sam/container.css')}" />
-             
-      <script>
-        // display member
-        function display(id) {
-          if (!id) return;
-          $('search').value = "";
-          $('display_details').innerHTML = '<img src="${createLinkTo(dir:'images/tree/menu',file:'loading.gif')}" border="0" style="float:left;visibility:visible;clear:both;">';
-          new Ajax.Updater('display_details','${request.contextPath}/member/renderMember/'+id,{asynchronous:true,evalScripts:true});
+    #overlayScreen {
+        height: 500px;
+        width: 500px;
+        margin: 0 auto;
+        position: fixed;
+        z-index: 10;
+        display: none;
+        background: rgb(245, 245, 245);
+        border: 7px solid #fed136;
+        /*border: 3px solid #333;*/
+        border-radius: 10px;
+        top: 10%;
+        right: 30%;
+    }
+
+    #overlayScreen:target, #overlayScreen:target + #overlayCover {
+        display: block;
+        opacity: 2;
+    }
+    </style>
+
+    <script type="text/javascript">
+        function hideOverlay() {
+            $("#overlayCover").hide();
+            $("#overlayScreen").hide();
         }
 
-        // wedding update completed
-        function done(req) {
-          if (req.responseText == "true") {
-            $('edit_wedding_result').setStyle({color:006600}).update('Updated successfully. <g:link controller="member" action="display" id="${member?.id}">Continue</g:link>');
-            $('wedding_save_button').addClassName('disabled').disabled = "disabled";
-          } else {
-            $('edit_wedding_result').setStyle({color:660000}).update('Sorry! ' + req.responseText); 
-          }
+        function init() {
+            if (window.goSamples)
+                goSamples();  // init for these samples -- you don't need to call this
+            var $ = go.GraphObject.make;  // for conciseness in defining templates
+
+            myDiagram =
+                    $(go.Diagram, "myDiagram", // must be the ID or reference to div
+                            {
+                                initialContentAlignment: go.Spot.Center,
+                                // make sure users can only create trees
+                                validCycle: go.Diagram.CycleDestinationTree,
+                                // users can select only one part at a time
+                                maxSelectionCount: 1,
+                                layout: $(go.TreeLayout,
+                                        {
+                                            treeStyle: go.TreeLayout.StyleLastParents,
+                                            arrangement: go.TreeLayout.ArrangementHorizontal,
+                                            // properties for most of the tree:
+                                            angle: 90,
+                                            layerSpacing: 35,
+                                            // properties for the "last parents":
+                                            alternateAngle: 90,
+                                            alternateLayerSpacing: 35,
+                                            alternateAlignment: go.TreeLayout.AlignmentBus,
+                                            alternateNodeSpacing: 20
+                                        }),
+                                // support editing the properties of the selected person in HTML
+                                "ChangedSelection": onSelectionChanged,
+//                            "TextEdited": onTextEdited,
+                                // enable undo & redo
+                                "undoManager.isEnabled": true
+                            });
+
+            // when the document is modified, add a "*" to the title and enable the "Save" button
+            myDiagram.addDiagramListener("Modified", function (e) {
+                var button = document.getElementById("SaveButton");
+                if (button) button.disabled = !myDiagram.isModified;
+                var idx = document.title.indexOf("*");
+                if (myDiagram.isModified) {
+                    if (idx < 0) document.title += "*";
+                } else {
+                    if (idx >= 0) document.title = document.title.substr(0, idx);
+                }
+            });
+
+            var levelColors = ["#AC193D/#BF1E4B", "#2672EC/#2E8DEF", "#8C0095/#A700AE", "#5133AB/#643EBF",
+                "#008299/#00A0B1", "#D24726/#DC572E", "#008A00/#00A600", "#094AB2/#0A5BC4"];
+
+            // override TreeLayout.commitNodes to also modify the background brush based on the tree depth level
+            myDiagram.layout.commitNodes = function () {
+                go.TreeLayout.prototype.commitNodes.call(myDiagram.layout);  // do the standard behavior
+                // then go through all of the vertexes and set their corresponding node's Shape.fill
+                // to a brush dependent on the TreeVertex.level value
+                myDiagram.layout.network.vertexes.each(function (v) {
+                    if (v.node) {
+                        var level = v.level % (levelColors.length);
+                        var colors = levelColors[level].split("/");
+                        var shape = v.node.findObject("SHAPE");
+                        if (shape) shape.fill = $(go.Brush, "Linear", {
+                            0: colors[0],
+                            1: colors[1],
+                            start: go.Spot.Left,
+                            end: go.Spot.Right
+                        });
+                    }
+                });
+            }
+
+            // when a node is double-clicked, add a child to it
+            function nodeDoubleClick(e, obj) {
+                var clicked = obj.part;
+                if (clicked !== null) {
+                    var thisemp = clicked.data;
+                    myDiagram.startTransaction("add employee");
+                    var nextkey = (myDiagram.model.nodeDataArray.length + 1).toString();
+                    var newemp = {key: nextkey, name: "(new person)", title: "", parent: thisemp.key};
+                    myDiagram.model.addNodeData(newemp);
+                    myDiagram.commitTransaction("add employee");
+                }
+            }
+
+            // this is used to determine feedback during drags
+            function mayWorkFor(node1, node2) {
+                if (!(node1 instanceof go.Node)) return false;  // must be a Node
+                if (node1 === node2) return false;  // cannot work for yourself
+                if (node2.isInTreeOf(node1)) return false;  // cannot work for someone who works for you
+                return true;
+            }
+
+            // This function provides a common style for most of the TextBlocks.
+            // Some of these values may be overridden in a particular TextBlock.
+            function textStyle() {
+                return {font: "9pt  Segoe UI,sans-serif", stroke: "white"};
+            }
+
+            // This converter is used by the Picture.
+            function findHeadShot(key) {
+//                if (key > 16) return ""; // There are only 16 images on the server
+//                return "images/HS" + key + ".png"
+                var memberList=${memberWithAvatar}
+                if( memberList[key]==undefined){
+                    return ""
+                }else{
+                    return "${application.contextPath}${grailsApplication.config.avatar.small.temp.path}"+key+"."+memberList[key]
+                }
+            };
+
+
+            // define the Link template
+            myDiagram.linkTemplate =
+                    $(go.Link, go.Link.Orthogonal,
+                            {corner: 5, relinkableFrom: true, relinkableTo: true},
+                            $(go.Shape, {strokeWidth: 4, stroke: "#00a4a4"}));  // the link shape
+
+            // define the Node template
+            myDiagram.nodeTemplate =
+                    $(go.Node, "Auto",
+                            {doubleClick: nodeDoubleClick},
+                            { // handle dragging a Node onto a Node to (maybe) change the reporting relationship
+                                mouseDragEnter: function (e, node, prev) {
+                                    var diagram = node.diagram;
+                                    var selnode = diagram.selection.first();
+                                    if (!mayWorkFor(selnode, node)) return;
+                                    var shape = node.findObject("SHAPE");
+                                    if (shape) {
+                                        shape._prevFill = shape.fill;  // remember the original brush
+                                        shape.fill = "darkred";
+                                    }
+                                },
+                                mouseDragLeave: function (e, node, next) {
+                                    var shape = node.findObject("SHAPE");
+                                    if (shape && shape._prevFill) {
+                                        shape.fill = shape._prevFill;  // restore the original brush
+                                    }
+                                },
+                                mouseDrop: function (e, node) {
+                                    var diagram = node.diagram;
+                                    var selnode = diagram.selection.first();  // assume just one Node in selection
+                                    if (mayWorkFor(selnode, node)) {
+                                        // find any existing link into the selected node
+                                        var link = selnode.findTreeParentLink();
+                                        if (link !== null) {  // reconnect any existing link
+                                            link.fromNode = node;
+                                        } else {  // else create a new link
+                                            diagram.toolManager.linkingTool.insertLink(node, node.port, selnode, selnode.port);
+                                        }
+                                    }
+                                }
+                            },
+                            // for sorting, have the Node.text be the data.name
+                            new go.Binding("text", "name"),
+                            // bind the Part.layerName to control the Node's layer depending on whether it isSelected
+                            new go.Binding("layerName", "isSelected", function (sel) {
+                                return sel ? "Foreground" : "";
+                            }).ofObject(),
+                            // define the node's outer shape
+                            $(go.Shape, "Rectangle",
+                                    {
+                                        name: "SHAPE", fill: "white", stroke: null,
+                                        // set the port properties:
+                                        portId: "", fromLinkable: true, toLinkable: true, cursor: "pointer"
+                                    }),
+                            $(go.Panel, "Horizontal",
+                                    $(go.Picture,
+                                            {
+                                                name: 'Picture',
+                                                desiredSize: new go.Size(39, 50),
+                                                margin: new go.Margin(6, 8, 6, 10),
+                                            },
+                                            new go.Binding("source", "key", findHeadShot)),
+                                    // define the panel where the text will appear
+                                    $(go.Panel, "Table",
+                                            {
+                                                maxSize: new go.Size(150, 999),
+                                                margin: new go.Margin(6, 10, 0, 3),
+                                                defaultAlignment: go.Spot.Right
+                                            },
+                                            $(go.RowColumnDefinition, {column: 2, width: 4}),
+                                            $(go.TextBlock, textStyle(),  // the name
+                                                    {
+                                                        row: 0, column: 0, columnSpan: 5,
+                                                        font: "12pt Segoe UI,sans-serif",
+//                                                        editable: true,
+                                                        isMultiline: false,
+                                                        minSize: new go.Size(10, 16)
+                                                    },
+                                                    new go.Binding("text", "name").makeTwoWay()),
+                                            $(go.TextBlock, " : ${message(code:"member.display.titleMember",defualt:"Nickname:")} ", textStyle(),
+                                                    {row: 1, column: 3}),
+                                            $(go.TextBlock, textStyle(),
+                                                    {
+                                                        row: 1, column: 0
+//                                                        , columnSpan: 4,
+//                                                        editable: true, isMultiline: false,
+//                                                        minSize: new go.Size(10, 14),
+//                                                        margin: new go.Margin(0, 0, 0, 3)
+                                                    },
+                                                    new go.Binding("text", "title").makeTwoWay()),
+//                                        $(go.TextBlock, textStyle(),
+//                                                { row: 2, column: 0 },
+//                                                new go.Binding("text", "key", function(v) {return "ID: " + v;})),
+                                            $(go.TextBlock, " : ${message(code:"member.display.parent",defualt:"Parent:")} ", textStyle(),
+                                                    {row: 2, column: 3}),
+                                            $(go.TextBlock, textStyle(),
+                                                    {row: 2, column: 0,},
+                                                    new go.Binding("text", "comments").makeTwoWay())
+                                            %{--, function(v) {return "${message(code:"member.display.parent" ,default:"Parent")}: " + v;})),--}%
+                                            %{--$(go.TextBlock, textStyle(),  // the comments--}%
+                                            %{--{--}%
+                                            %{--row: 3, column: 0, columnSpan: 5,--}%
+                                            %{--font: "italic 9pt sans-serif",--}%
+                                            %{--wrap: go.TextBlock.WrapFit,--}%
+                                            %{--editable: true,  // by default newlines are allowed--}%
+                                            %{--minSize: new go.Size(10, 14)--}%
+                                            %{--},--}%
+                                            %{--new go.Binding("text", "comments").makeTwoWay())--}%
+                                    )  // end Table Panel
+                            ) // end Horizontal Panel
+                    );  // end Node
+
+            // read in the JSON-format data from the "mySavedModel" element
+            load();
         }
-        
-        // TODO wedding updated
-        function memberEditComplete(req) {
-          if (req.responseText == "true")
-            $('edit_member_result').innerHTML = 'Updated successfully. <g:link controller="member" action="dislay" id="${member?.id}">Continue</g:link>';
-        } 
 
-	    // Yes event handlers for delete dialog
-	    var handleYesDelete = function() {
-	      document.forms.member_form.action = "<g:createLink action="delete" />";
-		  document.forms.member_form.submit();
-		  this.hide();
-	    };
-
-        // Yes event handlers for reset avatar dialog
-	    var handleYesReset = function() {
-	      document.forms.member_form.action = "<g:createLink action="resetAvatar" />";
-		  document.forms.member_form.submit();
-		  this.hide();
-	    };
-
-        // dislay reset avatar dialog
-	    function showResetDialog(id, nickname) {
-	       $('a_id').value = id;
-	       var resetDialog = new YAHOO.widget.SimpleDialog("resetDialog", 
-			 { width: "300px",
-		       fixedcenter: true,
-			   visible: false,
-			   draggable: false,
-			   close: true,
-			   modal: true,
-			   text: "This will reset " + nickname + "'s avatar to the default image. ",																			 
-			   constraintoviewport: true,
-			   underlay: false,
-			   buttons: [ { text:"Yes", handler:handleYesReset },
-						  { text:"No",  handler:function() {this.hide();}, isDefault:true } ]
-			 } );
-	       resetDialog.setHeader("Do you want really want to reset avatar?");
-	       resetDialog.render(document.body);
-	       resetDialog.show(); 	     
-	     }
-	     
-	     var weddingPanel;           
-         function init() {
-            weddingPanel = new YAHOO.widget.Panel("weddingPanel", { width:"425px", visible:false, fixedcenter: true, constraintoviewport:true, draggable:true, modal: true, underlay:false } );
-			weddingPanel.render(document.body);
-		 }
-
-         // display delete dialog
-         function showDeleteDialog(id, nickname) {
-           $('a_id').value = id;
-	       var deleteDialog = new YAHOO.widget.SimpleDialog("deleteDialog", 
-			 { width: "300px",
-		       fixedcenter: true,
-			   visible: false,
-			   draggable: false,
-			   close: true,
-			   modal: true,
-			   text: "Deleting " + nickname + " will permanently remove member details from the system.",																			 
-			   constraintoviewport: true,
-			   underlay: false,
-			   buttons: [ { text:"Yes", handler:handleYesDelete },
-						  { text:"No",  handler:function() {this.hide();}, isDefault:true } ]
-			 } );
-	       deleteDialog.setHeader("Do you want really want to delete?");
-	       deleteDialog.render(document.body);
-	       deleteDialog.show();         
-         }
-         
-         // display wedding panel
-         function showWeddingPanel(id) {
-            clearWeddingPanel();
-            weddingPanel.show();
-            new Ajax.Updater('weddingPanelBody','${request.contextPath}/wedding/edit/'+id,{asynchronous:true,evalScripts:true});
-         }
-         
-         // clear wedding panel
-         function clearWeddingPanel() {
-            $('weddingPanelBody').update('<img src="${request.contextPath}/images/rotating_arrow.gif">');
-         }
-         
-        YAHOO.util.Event.addListener(window, "load", init);
-      </script>
-      <style>
-        .searchcontainer .yui-skin-sam { margin-left: 200px;}
-        #linkbuttonEdit a  {
-           padding-left: 2.25em;
-           background: url(/famree/images/icon_edit.gif) 10% 50% no-repeat;
-        }
-        #linkbuttonAdd a { 
-           padding-left: 2.25em;
-           background: url(/famree/images/icon_add.gif) 10% 50% no-repeat;
+        // Allow the user to edit text when a single node is selected
+        function onSelectionChanged(e) {
+            var node = e.diagram.selection.first();
+            if (node instanceof go.Node) {
+                updateProperties(node.data);
+            } else {
+                updateProperties(null);
+            }
         }
 
-        #linkbuttonReset a { 
-           padding-left: 2.25em;
-           background: url(/famree/images/icon_reset.png) 10% 50% no-repeat;
+        // Update the HTML elements for editing the properties of the currently selected node, if any
+        function updateProperties(memberData) {
+            if (memberData === null) {
+
+                clearContext("");
+            } else {
+//                alert(memberData.key);
+                $.ajax({
+                    url: '<g:createLink action="jsonMemberDetails" params="id:"/>',
+                    data: {id: memberData.key},
+                    type: "POST",
+                    success: function (response) {
+//                        alert(response.model.name+" title:"+response.model.title+" parentsData:"+response.model.parentsData+" cibilings:"
+//                                +response.model.cibilings+" supose:"
+//                                +response.model.spouseWedding+response.model.mainWedding+" children:"+response.model.spouseChildren+response.model.mainChildren);
+                        if (response == "" || response == "{}" || response == "[]" || response.model.error) {
+                            clearContext("${message (code:"member.display.popup.error")}");
+
+                        } else {
+                            document.getElementById("name").innerHTML = response.model.name;
+                            document.getElementById("title").innerHTML = response.model.title;
+                            document.getElementById("parents").innerHTML = response.model.parentsData;
+                            document.getElementById("cibilings").innerHTML = response.model.cibilings;
+                            var coma = "";
+                            if (response.model.spouseWedding == "" && response.model.mainWedding)
+                                coma = ",";
+                            document.getElementById("spouse").innerHTML = response.model.spouseWedding + coma + response.model.mainWedding;
+                            coma = "";
+                            if (response.model.spouseChildren == "" && response.model.mainChildren)
+                                coma = ",";
+                            document.getElementById("children").innerHTML = response.model.spouseChildren + coma + response.model.mainChildren;
+                            document.getElementById("error").innerHTML = "";
+                        }
+//                        $("#imgAvatar").attr("src", "data:image/jpeg;base64,"+response.model.avatar);
+                        $("#imgAvatar").attr("src", ""+response.model.avatar);
+                        shouPopup();
+                    },
+                    error: function () {
+                        clearContext("${message (code:"member.display.popup.error")}");
+                    }
+
+                })
+            }
         }
-        #linkbuttonDelete a { 
-           padding-left: 2.25em;
-           background: url(/famree/images/icon_delete.gif) 10% 50% no-repeat;
+
+        function clearContext(error) {
+            document.getElementById("name").innerHTML = "";
+            document.getElementById("title").innerHTML = "";
+            document.getElementById("parents").innerHTML = "";
+            document.getElementById("cibilings").innerHTML = "";
+            document.getElementById("spouse").innerHTML = "";
+            document.getElementById("children").innerHTML = "";
+            document.getElementById("error").innerHTML = error;
+
+            if (error || error != "") {
+                $("#btnMessage").hide();
+//                alert("  ");
+            }
+            else {
+                $("#btnMessage").show();
+//                alert(" 1 ");
+            }
+
         }
-      </style>
-    </head>
-    <body>
-        <div class="body">
-            <h1>Browse Members</h1>
 
-            <div class="display_autocomplete">
-              <g:form>
-                 <div style="font-weight:bold;">Search a family member:</div>
-                 <richui:autoComplete name="search" action="${createLinkTo('dir': 'member/search')}" shadow="true" minQueryLength="1" onItemSelect="display(id);" style="width:250px;margin:10px 0 0 0;"/>
-              </g:form>
-            </div>
+        // This is called when the user has finished inline text-editing
+        function onTextEdited(e) {
+            var tb = e.subject;
+            if (tb === null || !tb.name) return;
+            var node = tb.part;
+            if (node instanceof go.Node) {
+                updateProperties(node.data);
+            }
+        }
 
-            <div class="quick_links">
-              <b>Quick links:</b> <br>
-              <g:link action="list">List all members</g:link> <br>
-              <sec:ifAnyGranted roles="ROLE_ADMIN"><g:link action="create">Add new member</g:link></sec:ifAnyGranted>&nbsp;
-            </div>
+        // Update the data fields when the text is changed
+        function updateData(text, field) {
+            var node = myDiagram.selection.first();
+            // maxSelectionCount = 1, so there can only be one Part in this collection
+            var data = node.data;
+            if (node instanceof go.Node && data !== null) {
+                var model = myDiagram.model;
+                model.startTransaction("modified " + field);
+                if (field === "name") {
+                    model.setDataProperty(data, "name", text);
+                } else if (field === "title") {
+                    model.setDataProperty(data, "title", text);
+                } else if (field === "comments") {
+                    model.setDataProperty(data, "comments", text);
+                }
+                model.commitTransaction("modified " + field);
+            }
+        }
 
-            <div style="clear:both;height:5px">&nbsp;</div>
+        // Show the diagram's model in JSON format
+        function save() {
+            document.getElementById("mySavedModel").value = myDiagram.model.toJson();
+            myDiagram.isModified = false;
+        }
+        function load() {
+            myDiagram.model = go.Model.fromJson(document.getElementById("mySavedModel").value);
+        }
 
-            <div class="display_tree">
-              <g:if test="${data}">
-                <richui:treeView xml="${data}" onLabelClick="display(id);" />
-              </g:if>
-            </div>
+        function shouPopup() {
+            $("#overlayCover").show();
+            $("#overlayScreen").show();
+        }
 
-            <div class="display_details" id="display_details">
-                <g:if test="${member}"><g:render template="displayMember" model="[member:member]" /></g:if>
-                <g:else>View a family member details by clicking on the tree or by searching</g:else>
-            </div>
+    </script>
 
-            <div style="clear:both">&nbsp;</div>
+</head>
+
+<body dir="rtl">
+<div id="overlayScreen" dir="rtl">
+    %{--<div class="text-warning" style="margin: 20px;font-size: 13px;">--}%
+    <div class="text-popup">
+        <br>
+
+        %{--<div class="row">--}%
+        %{--<div class="col-lg-1"></div>--}%
+        %{--<div class="col-lg-10" style="font-weight: bold"><g:message code="member.display.popup.header"/></div>--}%
+        %{--<div class="col-lg-1"></div>--}%
+        %{--</div>--}%
+
+        <div class="row">
+            <div class="col-lg-2"></div>
+
+            %{--<div class="col-lg-6" id="imgMember"><img src="<g:avatar member="177" avatarSize=""/>" height="130px"></div>--}%
+            <div class="col-lg-6" id="imgMember"><img id="imgAvatar" src="" height="130px"></div>
+
+            <div class="col-lg-4"></div>
         </div>
 
-        <g:form controller="member" name="member_form">
-          <input type="hidden" name="id" id="a_id">
-        </g:form>
+        <br>
 
-       <div id="weddingPanel" style="visibility:hidden">
-	  	 <div class="hd">Manage Wedding</div>
-		 <div class="bd" id="weddingPanelBody">&nbsp;</div>
-	   </div>
+        <div class="row">
+            <div class="col-lg-1"></div>
 
-    </body>
+            <div class="col-lg-6" id="name"></div>
+
+            <div class="col-lg-3 header header"><g:message code="member.display.popup.name"/></div>
+
+            <div class="col-lg-1"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-1"></div>
+
+            <div class="col-lg-6" id="title"></div>
+
+            <div class="col-lg-3 header"><g:message code="member.display.popup.title"/></div>
+
+            <div class="col-lg-1"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-1"></div>
+
+            <div class="col-lg-6" id="parents"></div>
+
+            <div class="col-lg-3 header"><g:message code="member.display.popup.parent"/></div>
+
+            <div class="col-lg-1"></div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-lg-1"></div>
+
+            <div class="col-lg-6" id="cibilings"></div>
+
+            <div class="col-lg-3 header"><g:message code="member.display.popup.cibiling"/></div>
+
+            <div class="col-lg-1"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-1"></div>
+
+            <div class="col-lg-6" id="spouse"></div>
+
+            <div class="col-lg-3 header"><g:message code="member.display.popup.spouse"/></div>
+
+            <div class="col-lg-1"></div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-lg-1"></div>
+
+            <div class="col-lg-6" id="children"></div>
+
+            <div class="col-lg-3 header"><g:message code="member.display.popup.children"/></div>
+
+            <div class="col-lg-1"></div>
+        </div>
+
+        <div id="error"></div>
+    </div>
+
+    <br>
+
+    <div class="col-lg-4"></div>
+
+    <div class="btn-group col-lg-6" style="text-align:center;">
+        <button class="btn btn-info btn-large" id="btnClose" onclick="hideOverlay()"
+                style="font-family: Montserrat"><g:message
+                code='member.display.popup.closed'/></button>
+
+        <button class="btn btn-info btn-large" id="btnMessage" onclick="sendMessage()"
+                style="font-family: Montserrat"><g:message
+                code='member.display.popup.message'/></button>
+
+    </div>
+
+    <div class="col-lg-2"></div>
+</div>
+
+<div id="overlayCover">
+</div>
+
+<div id="sample">
+    <div id="myDiagram" style="background-color: #222222; border: solid 1px black; height: 500px;"></div>
+</div>
+
+<div>
+    <textarea id="mySavedModel" style="display: none;">${chartMemebers}</textarea>
+</div>
+%{--<button onclick="shouPopup()">show</button>--}%
+</body>
 </html>

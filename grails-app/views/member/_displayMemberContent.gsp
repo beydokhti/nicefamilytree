@@ -1,5 +1,5 @@
 
-      <richui:tabContent>
+      %{--<richui:tabContent>--}%
         <div style="height:225px;padding: 5px;">
           <img src="<g:avatar member="${member}" />" class="avatar_tab"> 
           <div class="tab_fullname">${member.name}</div> 
@@ -58,4 +58,4 @@
 	      </div>
 	      
 	    </div>  
-	  </richui:tabContent>
+	  %{--</richui:tabContent>--}%

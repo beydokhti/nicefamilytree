@@ -39,7 +39,8 @@ grails.project.dependency.resolution = {
         //mavenRepo "http://snapshots.repository.codehaus.org"
         //mavenRepo "http://repository.codehaus.org"
         //mavenRepo "http://download.java.net/maven/2/"
-        //mavenRepo "http://repository.jboss.com/maven2/"
+        mavenRepo "https://mvnrepository.com/artifact/org.imgscalr/imgscalr-lib"
+//        mavenRepo "http://www.java2s.com/Code/Jar/i/Downloadimgscalrlib41jar.htm"
     }
 
     dependencies {
@@ -66,6 +67,7 @@ grails.project.dependency.resolution = {
 
         compile ":spring-security-core:1.2.7.4"
 
-        compile ":richui:0.8"
+//        compile ":richui:0.3"
+//        compile 'org.imgscalr:imgscalr-lib:4.2'
     }
 }

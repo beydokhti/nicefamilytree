@@ -12,26 +12,43 @@
 </div>
 
 
-<div class="display_member">  
-        
-<richui:tabView id="tabViewMember">
-    <richui:tabLabels>
-        <richui:tabLabel selected="true" title="${member.nickname}" />
-        <g:if test="${member.spouse}"><richui:tabLabel title="${member.spouse.nickname}" /></g:if>
-    </richui:tabLabels>
 
-    <richui:tabContents>
-      <richui:tabContent><g:render template="displayMemberContent" model="[member:member]" /></richui:tabContent>
-    
-    <g:if test="${member.spouse}">
-	<richui:tabContent><g:render template="displayMemberContent" model="[member:member.spouse]" /></richui:tabContent>
+<div style="height:225px;padding: 5px;">
+    <img src="<g:avatar member="${member}" />" class="avatar_tab">
+    <div class="tab_fullname">${member.name}</div>
+
+    <div class="tab_name">Born: </div> <div class="tab_value"><g:formatDate date="${member.birthDate}" format="MMM dd, yyyy" /> </div>
+    <g:if test="${member.deathDate}">
+        <div class="tab_name">Died: </div> <div class="tab_value"><g:formatDate date="${member.deathDate}" format="MMM dd, yyyy" /> </div>
     </g:if>
-    
-    </richui:tabContents>
-</richui:tabView>
- 
- </div>
- 
+    <g:if test="${member.spouse}">
+        <div class="tab_name">Spouse: </div> <div class="tab_value">${member?.spouse?.nickname} </div>
+        <div class="tab_name">Wedding: </div> <div class="tab_value"><g:formatDate date="${member?.wedding?.weddingDate}" format="MMM dd, yyyy" /> </div>
+    </g:if>
+
+    <g:if test="${member.inactiveWeddings}">
+        <div class="tab_name">Prev spouses: </div>
+        <div class="tab_value">
+            <g:each in="${member?.inactiveWeddings}" var="w">
+                <g:set var="s" value="${w.mainMember==member? w.spouseMember:w.mainMember}" />
+                <a href="javascript:display(${s.id});"><span class="person">${s.nickname}</span></a>
+            </g:each>
+        </div>
+    </g:if>
+
+    <div class="tab_siblings">
+        <g:if test="${member.parent?.children?.size() > 1}">
+            <b>Siblings:</b>
+            <g:each in="${member.parent?.childrenSorted}">
+                <g:if test="${it != member}">
+                    <a href="javascript:display(${it.id});"><span class="person">${it.nickname}</span></a>
+                </g:if>
+            </g:each>
+        </g:if>
+    </div>
+
+</div>
+
  
  <div class="display_member_children">
    <g:if test="${member.children}"><img src="${createLinkTo(dir:'images',file:'arrow.jpeg')}" alt="arrow" /> <br><br></g:if>

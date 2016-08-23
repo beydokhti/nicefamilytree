@@ -8,5 +8,5 @@ class ChartMember {
     String name;
     String title;
     //todo add comment
-//    String comment;
+    String comments;
 }

@@ -1,19 +1,30 @@
 package nicefamilytree
+
+import grails.converters.JSON
+import org.bouncycastle.util.encoders.Base64
+import org.codehaus.groovy.grails.plugins.springsecurity.GrailsUser
+import org.imgscalr.Scalr
+
+import javax.imageio.ImageIO
+import javax.swing.ImageIcon
+import java.awt.Image
+import java.awt.image.BufferedImage
+
 /**
  * Member Controller
  *
  * @author Manohar Viswanathan
  */
-class MemberController   {
-
+class MemberController {
+    def grailsApplication
     def memberService
-//    AuthenticateService authenticateService
+    def springSecurityService
 
     // the delete, save and update actions only accept POST requests
     def allowedMethods = [delete: 'POST', save: 'POST', update: 'POST']
 
     // default action                      
-    def index = { redirect(action: list, params: params) }
+    def index = { redirect(action: display, params: params) }
 
     // list all family members
     def list = {
@@ -30,35 +41,73 @@ class MemberController   {
     }
 
     def profile = {
-//        def uinfo = authenticateService.userDomain()
-//        def member
-//        if (uinfo) {
-//            member = FamilyMember.findByAuthUser(AuthUser.get(uinfo.id))
-//
-//        } else {
-//            redirect(action: "index")
-//        }
-//        [member: member]
-//        [ member : FamilyMember.get( params.id ) ]
+        println(new Date().toString() + " profile params: " + params)
+        def memberId=params.id
+        def wedding
+        def member
+        def model=[:]
+        if (memberId){
+            member = FamilyMember.get(memberId)
+        }else {
+            def uinfo = springSecurityService.getPrincipal()
+            if (uinfo && uinfo instanceof GrailsUser) {
+                member = FamilyMember.findByAuthUser(AuthUser.get(uinfo.id))
+            } else {
+                //todo-mtb change redirect
+                return redirect(action: "index")
+            }
+        }
+        if (member) {
+            model.parentsData = member?.parent?.mainMember?.name + "," + member?.parent?.spouseMember?.name
+            model.name = member.name
+            model.id = member.id
+            model.title = member.nickname
+            model.cibilings = member?.parent?.children?.collect { its -> its.name }
+            model.spouseWedding = ""
+            model.mainWedding = ""
+            model.mainChildren = ""
+            model.spouseChildren = ""
+            wedding = Wedding.findAllByMainMember(member)
+            if (wedding) {
+                model.spouseWedding = wedding.spouseMember.collect { itw -> itw.name }
+                model.spouseChildren = wedding.children.collect { itd -> itd.name }
+            }
+            wedding = Wedding.findAllBySpouseMember(member)
+            if (wedding) {
+                model.mainWedding = model.spouse + wedding.mainMember.collect { itf -> itf.name }
+                model.mainChildren = model.children + wedding.children.collect { itx -> itx.name }
+            }
+
+            if(member?.avatar?.length > 0 && member.avatarMime)
+            {
+                model.avatar="${request.contextPath}/member/avatar/${member.id}"
+            }else{
+                if(member && member?.gender=="MALE")
+                    model.avatar="${request.contextPath}/images/avatar_default_man.png"
+                else if(member && member?.gender=="FEMALE")
+                    model.avatar="${request.contextPath}/images/avatar_default_woman.png"
+                else
+                    model.avatar="${request.contextPath}/images/avatar_default_unknownGender.png"
+            }
+        }
+
+        [member: model]
     }
 
-    def updateAvatar={
-        def member = new FamilyMember(params)
-        if(member) {
-            def file = request.getFile("avatar")
-            member.avatarMime = member.avatar?.length>0? file?.contentType : null
+    def updateAvatar = {
+        println(new Date().toString() + " updateAvatar params: " + params)
 
-            if(!member.hasErrors() && member.validate()) {
-                member = memberService.updateFamilyMember(member)
-                flash.message = "${member.nickname} Picture have been updated"
-                redirect(action:properties,member:member)
-            } else {
-                redirect(action:properties,member:member)
-            }
+        def member = FamilyMember.get(params.id)
+        if (member) {
+            def file = request.getFile("avatar")
+            member.avatar=file.getBytes()
+            member.avatarMime = member.avatar?.length > 0 ? file?.contentType : null
+            saveSmallAvatar(member.id)
         } else {
+            //add message to page
             flash.message = "FamilyMember not found with id ${params.id}"
-            redirect(action:"profile",id:params.id)
         }
+        redirect(action: "profile", id: params.id)
 
     }
 
@@ -180,6 +229,8 @@ class MemberController   {
                 member.root = true
             }
             member = memberService.createFamilyMember(member, wedding)
+            if(member.avatar)
+                saveSmallAvatar(member.id)
             flash.message = "${member.nickname} has been added to the family"
             redirect(action: display, id: member.id)
         } else {
@@ -202,14 +253,122 @@ class MemberController   {
         }
     }
 
+    def avatarsm = {
+        def member = FamilyMember.get(params.key)
+
+        if (member && member.avatar) {
+
+
+        }
+    }
+
+    def saveSmallAvatar(memberId){
+        try {
+            String absolutePath = getServletContext().getRealPath(grailsApplication.config.avatar.small.temp.path);
+            def member = FamilyMember.get(memberId)
+//            String imageFormat = member.avatarMime.replaceAll("image/","")
+            String imageFormat = "png"
+            Integer targetWidth = 39
+            Integer targetHeight = 50
+            InputStream is = new ByteArrayInputStream(member.avatar);
+            BufferedImage image = ImageIO.read(is)
+            BufferedImage scaledImg = Scalr.resize(image, Scalr.Method.QUALITY, Scalr.Mode.FIT_EXACT,
+                    targetWidth, targetHeight, Scalr.OP_ANTIALIAS)
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream()
+            ImageIO.write(scaledImg, imageFormat, baos)
+            baos.flush()
+            byte[] scaledImageInByte = baos.toByteArray()
+            baos.close()
+
+            FileOutputStream os = new FileOutputStream(absolutePath+"/" + member.id + "." + imageFormat)
+            os.write(scaledImageInByte)
+            os.close()
+        }catch (Exception e)
+        {
+            println "Error in saveSmallAvatar"
+            println e.getMessage()
+            e.printStackTrace()
+        }
+    }
+
+    def jsonMemberDetails() {
+        println(new Date().toString() + " jsonMemberDetails params: " + params)
+        def model = [:]
+        def member = FamilyMember.get(params.id)
+        def wedding
+
+        try {
+            if (member) {
+                model.parentsData = member?.parent?.mainMember?.name + "," + member?.parent?.spouseMember?.name
+                model.name = member.name
+                model.title = member.nickname
+                model.cibilings = member?.parent?.children?.collect { it -> it.name }
+                model.spouseWedding = ""
+                model.mainWedding = ""
+                model.mainChildren = ""
+                model.spouseChildren = ""
+                wedding = Wedding.findAllByMainMember(member)
+                if (wedding) {
+                    model.spouseWedding = wedding.spouseMember.collect { it -> it.name }
+                    model.spouseChildren = wedding.children.collect { it -> it.name }
+                }
+                wedding = Wedding.findAllBySpouseMember(member)
+                if (wedding) {
+                    model.mainWedding = model.spouse + wedding.mainMember.collect { it -> it.name }
+                    model.mainChildren = model.children + wedding.children.collect { it -> it.name }
+                }
+
+                if(member?.avatar?.length > 0 && member.avatarMime)
+                {
+                    model.avatar="${request.contextPath}/member/avatar/${member.id}"
+                }else{
+                    if(member && member?.gender=="MALE")
+                        model.avatar="${request.contextPath}/images/avatar_default_man.png"
+                    else if(member && member?.gender=="FEMALE")
+                        model.avatar="${request.contextPath}/images/avatar_default_woman.png"
+                    else
+                        model.avatar="${request.contextPath}/images/avatar_default_unknownGender.png"
+                }
+            }
+        } catch (Exception ex) {
+            println("---------------------------------------------------------------------------------------")
+            println(new Date().toString() + " Error in /niceFamilyTree/member/jsonMemberDetails :")
+            println(ex.message)
+            ex.printStackTrace()
+            model.error="Error"
+        }
+        render([model: model] as JSON)
+
+    }
+
     // display member
     def display = {
-        def root = memberService.getRootMember()
-        def s = new StringBuffer()
-        constructTree(root, s)
-        def member
-        if (params.id) member = FamilyMember.get(params.id.toString())
-        ["data": s.toString(), member: member]
+        def cm
+        def memberWithAvatar=[:]
+        ArrayList chartMemebers = new ArrayList()
+
+        def rootMember = FamilyMember.findByRoot(true)
+        cm = new ChartMember("key": rootMember.id, "name": rootMember.name, "title": rootMember.nickname)
+        chartMemebers.add(cm)
+        if (rootMember.avatarMime)
+            memberWithAvatar.put(rootMember.id.toString(),rootMember.avatarMime.replaceAll("image/",""))
+
+        def familyMembers = FamilyMember.findAll()
+        for (member in familyMembers) {
+
+            if (member.parent) {
+                cm = new ChartMember("key": member.id, "name": member.name, "title": member.nickname, "comments": member.parent.spouseMember.name)
+                cm.parent = member.parent.mainMember.id
+                chartMemebers.add(cm)
+                if (member.avatarMime)
+                    memberWithAvatar.put(member.id.toString(),member.avatarMime.replaceAll("image/",""))
+            }
+        }
+        def chartJSON = ("{ \"class\": \"go.TreeModel\",\t\"nodeDataArray\": " + (chartMemebers as JSON) + "}").replaceAll("\"parent\":null,", "")
+//        def memberWithAvatar=FamilyMember.findAllByAvatarMimeIsNotNull().collect{it.id.toString()};
+        [chartMemebers: chartJSON,memberWithAvatar:memberWithAvatar as JSON]
+
     }
 
     // render member
@@ -277,6 +436,93 @@ class MemberController   {
     class FamilyMemberCommand {
         Date weddingDate
         Boolean divorseFlag = false
+    }
+//
+//    def getImage() {
+//        if (params.id) {
+//            def attachment = FamilyMember.get(params.id)
+//            response.contentType = 'image/png'
+//            response.outputStream << attachment.document
+//            response.outputStream.flush()
+//        }
+//    }
+
+    def test() {}
+
+    def createUser(){
+
+    }
+
+    def createUserAjax(){
+        println new Date().toString()+ " member createUserAjax params:" +params
+        def username=params.username
+        def password=params.password
+        def memberId=params.memberId
+        def response=[:]
+        try {
+            if(memberId && password&& username) {
+                def userMember = FamilyMember.get(memberId)
+
+                if (userMember && !userMember.authUser) {
+                    def rm=Role.findByAuthority("ROLE_USER")
+                    MemberUser memberUser= new MemberUser(username:username,password: password,enabeld:true,accountExpired:false,
+                            accountLocked:false,passwordExpired:false,enabled: true,userRealName:userMember.name).save(flush:true)
+                    def ar=AuthUserRole.findByAuthUserAndRole(memberUser,rm)
+                    if(!ar)
+                        ar=new AuthUserRole(authUser:memberUser,role:rm).save(flush:true);
+
+                    userMember.authUser= memberUser
+                    response.status="operation is successful"
+                } else if (userMember && userMember.authUser){
+                    userMember.authUser.username=username
+                    userMember.authUser.password=password
+                    response.status="operation is successful"
+                } else {
+                    response.status="Error: member is invalid"
+                }
+            }
+
+        }catch (Exception ex){
+            response.status=ex.message
+        }finally{
+            render response as JSON
+        }
+
+    }
+
+    def searchAjax(params){
+        //todo-mtb persian name made error
+        println new Date().toString()+ " member serach ajax params:" +params
+        def searchText=params.searchText
+        def response=[:]
+        try {
+            if(searchText) {
+                def authUser = AuthUser.findByUsername(searchText)
+                def userMember = FamilyMember.findByAuthUser(authUser)
+
+                if (authUser) {
+                    response.username = authUser.username
+                    response.password = authUser.password
+                    response.memberId = userMember.id
+                } else {
+                    def member = FamilyMember.findByNameOrNickname(searchText, searchText)
+                    if (member?.authUser) {
+                        response.username = authUser.username
+                        response.password = authUser.password
+                        response.memberId = userMember.id
+                    }
+                }
+            }
+
+        }catch (Exception ex){
+            response.error=ex.message
+            response.username=null
+            response.password=null
+            response.username=null
+        }finally{
+            render response as JSON
+        }
+
     }
 
 }
