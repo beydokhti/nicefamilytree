@@ -126,59 +126,17 @@
 		<div class="row">
 			<div class="col-lg-12">
 				<ul class="timeline">
-					<li>
+					<li class="timeline-inverted">
 						<div class="timeline-image">
 							<img class="img-circle img-responsive" src="img/about/1.jpg" alt="">
 						</div>
 						<div class="timeline-panel">
 							<div class="timeline-heading">
-								<h4>2009-2011</h4>
-								<h4 class="subheading">Our Humble Beginnings</h4>
+								<h4>September 2016</h4>
+								<h4 class="subheading">Phase One Expansion</h4>
 							</div>
 							<div class="timeline-body">
-								<p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt ut voluptatum eius sapiente, totam reiciendis temporibus qui quibusdam, recusandae sit vero unde, sed, incidunt et ea quo dolore laudantium consectetur!</p>
-							</div>
-						</div>
-					</li>
-					<li class="timeline-inverted">
-						<div class="timeline-image">
-							<img class="img-circle img-responsive" src="img/about/2.jpg" alt="">
-						</div>
-						<div class="timeline-panel">
-							<div class="timeline-heading">
-								<h4>March 2011</h4>
-								<h4 class="subheading">An Agency is Born</h4>
-							</div>
-							<div class="timeline-body">
-								<p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt ut voluptatum eius sapiente, totam reiciendis temporibus qui quibusdam, recusandae sit vero unde, sed, incidunt et ea quo dolore laudantium consectetur!</p>
-							</div>
-						</div>
-					</li>
-					<li>
-						<div class="timeline-image">
-							<img class="img-circle img-responsive" src="img/about/3.jpg" alt="">
-						</div>
-						<div class="timeline-panel">
-							<div class="timeline-heading">
-								<h4>December 2012</h4>
-								<h4 class="subheading">Transition to Full Service</h4>
-							</div>
-							<div class="timeline-body">
-								<p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt ut voluptatum eius sapiente, totam reiciendis temporibus qui quibusdam, recusandae sit vero unde, sed, incidunt et ea quo dolore laudantium consectetur!</p>
-							</div>
-						</div>
-					</li>
-					<li class="timeline-inverted">
-						<div class="timeline-image">
-							<img class="img-circle img-responsive" src="img/about/4.jpg" alt="">
-						</div>
-						<div class="timeline-panel">
-							<div class="timeline-heading">
-								<h4>July 2014</h4>
-								<h4 class="subheading">Phase Two Expansion</h4>
-							</div>
-							<div class="timeline-body">
-								<p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt ut voluptatum eius sapiente, totam reiciendis temporibus qui quibusdam, recusandae sit vero unde, sed, incidunt et ea quo dolore laudantium consectetur!</p>
+								<p class="text-muted">Welcome to our family website! This site was created to keep the lines of communication open between the Mirzad family members in the whole world! We solicit news and information from our local family, we also keep in contact to stay current with their events. Whether you are in USA, Australia, France, in the Gulf States, or the moon, we want to hear from you.Thank you for taking the time to visit our new website! We hope this site provides information and keeps our family and friends up to date on the exciting times that lie ahead.</p>
 							</div>
 						</div>
 					</li>

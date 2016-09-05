@@ -33,19 +33,12 @@ environments {
     }
     production {
         dataSource {
-            dbCreate = "update"
-            url = "jdbc:h2:prodDb;MVCC=TRUE;LOCK_TIMEOUT=10000"
-            pooled = true
-            properties {
-               maxActive = -1
-               minEvictableIdleTimeMillis=1800000
-               timeBetweenEvictionRunsMillis=1800000
-               numTestsPerEvictionRun=3
-               testOnBorrow=true
-               testWhileIdle=true
-               testOnReturn=true
-               validationQuery="SELECT 1"
-            }
+            dbCreate = "update" // one of 'create', 'create-drop', 'update', 'validate', ''
+            driverClassName = "com.mysql.jdbc.Driver"
+            dialect = "org.hibernate.dialect.MySQL5InnoDBDialect"
+            username = "lardebah_user"
+            password = "lardebah_P4ss"
+            url = "jdbc:mysql://localhost/lardebah_db?useUnicode=yes&characterEncoding=UTF-8"
         }
     }
 }
