@@ -3,84 +3,125 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="layout" content="rowLayout"/>
     <title>Profile</title>
-    <script type="text/javascript">
-        function init(){}
-        $(".hover").mouseleave(
-                function () {
-                    $(this).removeClass("hover");
-                }
-        );
-    </script>
+    <link href="${resource(dir:"/css",file:"profile.css")}" rel="stylesheet">
 </head>
 
 <body>
-
-
-
-<figure class="snip1344"><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/331810/profile-sample1.jpg" alt="profile-sample1" class="background"/><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/331810/profile-sample1.jpg" alt="profile-sample1" class="profile"/>
-    <figcaption>
-        <h3>Besnik Hetemi<span>Straße 7</span><span>12345 Bhaus</span><span>01234567</span><span>mail@mail.com</span></h3>
-        <div class="icons"><a href="#"><i class="ion-ios-email-outline"></i></a><a href="#"> <i class="ion-lock-combination"></i></a><a href="#"> <i class="ion-ios-personadd-outline"></i></a></div>
-    </figcaption>
-</figure>
-%{--<div class="row">--}%
-    %{--<div class="col-sm-1 alert-warning"></div>--}%
-    %{--<div class="col-md-4 alert-warning">--}%
-        %{--<br/>--}%
-        %{--<div class="row">--}%
-            %{--<div class="col-md-2"></div>--}%
-            %{--<div class="col-md-10" id="imgMember"><img src="${member.avatar}" width="200px"/> </div>--}%
+<script type="text/javascript">
+    function init(){}
+    jQuery(document).ready(function() {
+        jQuery(".btn-pref .btn").click(function () {
+            jQuery(".btn-pref .btn").removeClass("btn-primary").addClass("btn-default");
+            // $(".tab").addClass("active"); // instead of this do the below
+            jQuery(this).removeClass("btn-default").addClass("btn-primary");
+            var id=jQuery(this).attr('href');
+            jQuery('.tab-pane').removeClass("active")
+            jQuery(id).addClass("active");
+        });
+    });
+</script>
+<div class="col-lg-2"></div>
+<div class="col-lg-8">
+    <div class="card hovercard">
+        %{--<div class="card-background">--}%
+            %{--<img class="card-bkimg" alt="" src="http://lorempixel.com/100/100/people/9/">--}%
+            %{--<!-- http://lorempixel.com/850/280/people/9/ -->--}%
         %{--</div>--}%
-    %{--<div class="row">--}%
-        %{--<div class="col-md-3"></div>--}%
-        %{--<div class="col-md-9" >--}%
-            %{--<g:form controller="member" action="updateAvatar" method="post" enctype="multipart/form-data">--}%
-                %{--<input type="hidden" id="memberId" value="${member.id}"/>--}%
-                    %{--<g:actionSubmit class="button" value="Update" action="updateAvatar" /><input type='file' id='avatar' name='avatar'/>--}%
-           %{--</g:form>--}%
-        %{--</div>--}%
-    %{--</div>--}%
+        <div class="useravatar">
+            %{--<img alt="" src="http://lorempixel.com/100/100/people/9/">--}%
+            <img alt="" src="${member.avatar}">
 
-    %{--<br>--}%
-    %{--<div class="row">--}%
-        %{--<div class="col-lg-1"></div>--}%
-        %{--<div class="col-lg-8" id="name">${member.name}</div>--}%
-        %{--<div class="col-lg-3 header"><g:message code="member.display.popup.name"/></div>--}%
-    %{--</div>--}%
+        </div>
+        <div class="card-info"> <span class="card-title">${member.name}</span>
 
-    %{--<div class="row">--}%
-        %{--<div class="col-lg-1"></div>--}%
-        %{--<div class="col-lg-8" id="title">${member.title}</div>--}%
-        %{--<div class="col-lg-3 header"><g:message code="member.display.popup.title"/></div>--}%
-    %{--</div>--}%
+        </div>
+    </div>
+    <div class="btn-pref btn-group btn-group-justified btn-group-lg" role="group" aria-label="...">
+        <div class="btn-group" role="group">
+            <button type="button" id="stars" class="btn btn-default" href="#tab1" data-toggle="tab" ><span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                <div class="hidden-xs">Posts</div>
+            </button>
+        </div>
+        <div class="btn-group" role="group">
+            <button type="button" id="favorites" class="btn btn-default" href="#tab2" data-toggle="tab" ><span class="glyphicon glyphicon-heart" aria-hidden="true"></span>
+                <div class="hidden-xs">About</div>
+            </button>
+        </div>
+        <div class="btn-group" role="group">
+            <button type="button" id="following" class="btn btn-primary" href="#tab3" data-toggle="tab" ><span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                <div class="hidden-xs">Family Information</div>
+            </button>
+        </div>
+    </div>
 
-    %{--<div class="row">--}%
-        %{--<div class="col-lg-1"></div>--}%
-        %{--<div class="col-lg-8" id="parents">${member.parentsData}</div>--}%
-        %{--<div class="col-lg-3 header"><g:message code="member.display.popup.parent"/></div>--}%
-    %{--</div>--}%
 
-    %{--<div class="row">--}%
-        %{--<div class="col-lg-1"></div>--}%
-        %{--<div class="col-lg-8" id="cibilings">${member.cibilings}</div>--}%
-        %{--<div class="col-lg-3 header"><g:message code="member.display.popup.cibiling"/></div>--}%
-    %{--</div>--}%
+    <div class="well tab-container">
+        <div class="tab-content">
+            <div class="tab-pane fade in " id="tab1">
+                <h3>This is tab 1</h3>
+            </div>
+            <div class="tab-pane fade in" id="tab2">
+                <h3>This is tab 2</h3>
+            </div>
+            <div class="tab-pane fade in active" id="tab3">
 
-    %{--<div class="row">--}%
-        %{--<div class="col-lg-1"></div>--}%
-        %{--<div class="col-lg-8" id="spouse">${member.spouseWedding},${member.mainWedding}</div>--}%
-        %{--<div class="col-lg-3 header"><g:message code="member.display.popup.spouse"/></div>--}%
-    %{--</div>--}%
+                <div class="row">
+                    <div class="col-lg-1"></div>
 
-    %{--<div class="row">--}%
-        %{--<div class="col-lg-1"></div>--}%
-        %{--<div class="col-lg-8" id="children">${member.spouseChildren},${member.mainChildren}</div>--}%
-        %{--<div class="col-lg-3 header"><g:message code="member.display.popup.children"/></div>--}%
-    %{--</div>--}%
-%{--</div>--}%
-%{--</div>--}%
-    %{--<div class="col-md-6"></div>--}%
-    %{--<div class="col-md-1"></div>--}%
+                    <div class="col-lg-6" id="title">${member.title}</div>
 
+                    <div class="col-lg-3 header" style="font-size: 16pt"><g:message code="member.display.popup.title"/></div>
+
+                    <div class="col-lg-1"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-1"></div>
+
+                    <div class="col-lg-6" id="parents">${member.parentsData}</div>
+
+                    <div class="col-lg-3 header" style="font-size: 16pt"><g:message code="member.display.popup.parent"/></div>
+
+                    <div class="col-lg-1"></div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-lg-1"></div>
+
+                    <div class="col-lg-6" id="cibilings">${member.cibilings}</div>
+
+                    <div class="col-lg-3 header" style="font-size: 16pt"><g:message code="member.display.popup.cibiling"/></div>
+
+                    <div class="col-lg-1"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-1"></div>
+
+                    <div class="col-lg-6" id="spouse"></div>
+
+                    <div class="col-lg-3 header" style="font-size: 16pt"><g:message code="member.display.popup.spouse"/></div>
+
+                    <div class="col-lg-1"></div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-lg-1"></div>
+
+                    <div class="col-lg-6" id="children"></div>
+
+                    <div class="col-lg-3 header" style="font-size: 16pt"><g:message code="member.display.popup.children"/></div>
+
+                    <div class="col-lg-1"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="col-lg-2"></div>
 </body>
 </html>

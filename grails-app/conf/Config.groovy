@@ -100,8 +100,6 @@ grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'nicefamilytre
 grails.plugins.springsecurity.authority.className = 'nicefamilytree.Role'
 grails.plugins.springsecurity.requestMap.className = 'nicefamilytree.AuthUserRole'
 grails.plugins.springsecurity.securityConfigType = 'InterceptUrlMap'
-//grails.plugins.springsecurity.securityConfigType = SecurityConfigType.Annotation
-
 
 
 grails.plugins.springsecurity.interceptUrlMap = [
@@ -119,10 +117,9 @@ grails.plugins.springsecurity.interceptUrlMap = [
         '/img/**': ['IS_AUTHENTICATED_ANONYMOUSLY'],
         '/images/**': ['IS_AUTHENTICATED_ANONYMOUSLY'],
 //        '/favico.ico': ['IS_AUTHENTICATED_ANONYMOUSLY'],
-        '/**': ['IS_AUTHENTICATED_ANONYMOUSLY'],
-        '/main/**': ['ROLE_ADMIN'],
-        '/member/**': ['ROLE_ADMIN'],
-]
+        '/main/**': ['ROLE_ADMIN','ROLE_USER'],
+        '/member/**': ['ROLE_ADMIN','ROLE_USER'],
+        '/**': ['IS_AUTHENTICATED_ANONYMOUSLY']]
 // Added by the Spring Security Core plugin:
 grails.plugins.springsecurity.userLookup.userDomainClassName = 'nicefamilytree.AuthUser'
 grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'nicefamilytree.AuthUserRole'
