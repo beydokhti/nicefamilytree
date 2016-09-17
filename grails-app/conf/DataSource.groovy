@@ -36,9 +36,16 @@ environments {
             dbCreate = "update" // one of 'create', 'create-drop', 'update', 'validate', ''
             driverClassName = "com.mysql.jdbc.Driver"
             dialect = "org.hibernate.dialect.MySQL5InnoDBDialect"
-            username = "lardebah_user"
-            password = "lardebah_P4ss"
-            url = "jdbc:mysql://localhost/lardebah_db?useUnicode=yes&characterEncoding=UTF-8"
+            username = "nicefamilytree"
+            password = "nicefamilytree"
+            url = "jdbc:mysql://localhost:3306/nicefamilytree?useUnicode=yes&characterEncoding=UTF-8"
+//            dbCreate = "update" // one of 'create', 'create-drop', 'update', 'validate', ''
+//            driverClassName = "com.mysql.jdbc.Driver"
+//            dialect = "org.hibernate.dialect.MySQL5InnoDBDialect"
+//            username = "nicefamilytree"
+//            password = "nicefamilytree"
+//            url = "jdbc:mysql://localhost/nicefamilytree?useUnicode=yes&characterEncoding=UTF-8"
+
         }
     }
 }

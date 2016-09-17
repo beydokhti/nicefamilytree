@@ -333,7 +333,7 @@ class MemberController {
             }
         } catch (Exception ex) {
             println("---------------------------------------------------------------------------------------")
-            println(new Date().toString() + " Error in /niceFamilyTree/member/jsonMemberDetails :")
+            println(new Date().toString() + " Error in /nicefamilytree/member/jsonMemberDetails :")
             println(ex.message)
             ex.printStackTrace()
             model.error="Error"

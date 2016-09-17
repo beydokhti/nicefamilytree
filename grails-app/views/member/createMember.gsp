@@ -5,7 +5,7 @@
   Time: 7:37 PMf
 --%>
 
-<%@ page import="niceFamilyTree.data.Gender" %>
+<%@ page import="nicefamilytree.data.Gender" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 
 <html>

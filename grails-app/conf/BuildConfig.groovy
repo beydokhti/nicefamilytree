@@ -12,9 +12,9 @@ grails.project.source.level = 1.6
 //   run: [maxMemory:1024, minMemory:64, debug:false, maxPerm:256]
 //]
 
-grails.war.resources = { stagingDir ->
-    delete(file:"${stagingDir}/WEB-INF/lib/mysql-connector-java-5.0.5-bin.jar")
-}
+//grails.war.resources = { stagingDir ->
+//    delete(file:"${stagingDir}/WEB-INF/lib/mysql-connector-java-5.0.5-bin.jar")
+//}
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {
@@ -50,9 +50,9 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
-        runtime ":hibernate:$grailsVersion"
-        runtime ":jquery:1.11.1"
-        runtime ":resources:1.2"
+        compile ":hibernate:$grailsVersion"
+        compile ":jquery:1.11.1"
+        compile ":resources:1.2"
 
         // Uncomment these (or add new ones) to enable additional resources capabilities
         //runtime ":zipped-resources:1.0"
@@ -66,6 +66,7 @@ grails.project.dependency.resolution = {
         compile ':cache:1.0.1'
 
         compile ":spring-security-core:1.2.7.4"
+
 
 //        compile ":richui:0.3"
 //        compile 'org.imgscalr:imgscalr-lib:4.2'

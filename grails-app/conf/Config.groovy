@@ -67,7 +67,9 @@ environments {
     }
     production {
         grails.logging.jul.usebridge = false
-        grails.serverURL = "http://lardebahari.com"
+//        grails.serverURL = "http://lardebahari.com"
+        grails.serverURL = "148.251.94.220"
+//        grails.serverURL = "http://localhost:8080/nicefamilytree"
     }
 }
 

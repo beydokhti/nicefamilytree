@@ -1,4 +1,4 @@
-package niceFamilyTree.data;
+package nicefamilytree.data;
 
 /**
  * Created by MaryJoOon on 7/1/2016.
